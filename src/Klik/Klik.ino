@@ -11,9 +11,6 @@
 #include <stdint.h>
 #include "TouchScreen.h"
 
-//Including my own libraries
-#include "Band.h"
-
 #define YP A2  // must be an analog pin, use "An" notation!
 #define XM A3  // must be an analog pin, use "An" notation!
 #define YM 8   // can be a digital pin
@@ -23,9 +20,6 @@
 // between X+ and X- Use any multimeter to read it
 // For the one we're using, its 300 ohms across the X plate
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
-
-//Create the chain. Only one will ever be used.
-Band band;
 
  void setup() {
   Serial.begin(9600);
