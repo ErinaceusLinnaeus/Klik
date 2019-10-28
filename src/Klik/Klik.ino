@@ -21,8 +21,33 @@
 // For the one we're using, its 300 ohms across the X plate
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
- void setup() {
+struct songlist
+{
+   char* songname;
+   int tempo;
+};
+typedef struct songlist songlist;
+
+struct band
+{
+   char* bandname;
+   songlist song[32]; 
+};
+typedef struct band band;
+
+void setup() {
   Serial.begin(9600);
+
+  band currBand;
+  //PSEUDOCODE, later replaced by stuff loaded from the SD card
+  currBand.bandname = "lister";
+  currBand.song[0].songname = "Sofdu";
+  currBand.song[0].tempo = 78;
+  currBand.song[1].songname = "Solo";
+  currBand.song[1].tempo = 112;
+
+  //etc.
+  
 
 }
 
