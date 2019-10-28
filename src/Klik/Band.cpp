@@ -3,7 +3,7 @@
  *  Band.cpp
  */
 
-//#include "Arduino.h"
+#include "Arduino.h"
 #include "Band.h"
 
 Band::Band() {
@@ -48,37 +48,48 @@ void Band::delSong() {
   delete temp;
 }
 
-//Save to SD Card
-void Band::saveBand() {
-
-}
-
 char* Band::getBandName(){
   
   return this->bandname;
 }
 
+Song* Band::getFirstSong(){
+
+  return this->firstSong;
+}
+
+Song* Band::getCurrSong(){
+
+  return this->currSong;
+}
+
+//Save to SD Card
+void Band::saveBand(){
+
+}
+
+void Band::setBandName(char bandname[31]){
+  
+  strcpy(this->bandname, bandname);
+}
+
+void Band::goToNextSong(){
+  
+  //It should loop back to first song after the last
+  //...nee to test that...
+  
+  this->currSong = this->currSong->nextSong;
+}
+
+void Band::goToTheTop(){
+
+  this->currSong = this->firstSong;
+}
 
 //BIS HIER BISHER
 //////////////////////////////////////////
 
 /*
-
-
-AutoRocketNode* AutoRocketList::getFirstNode(){
-  
-  return this->firstNode;
-}
-
-AutoRocketNode* AutoRocketList::getLastNode(){
-  
-  return this->lastNode;
-}
-
-AutoRocketNode* AutoRocketList::getCurrNode(){
-  
-  return this->currNode;
-}
 
 
 
@@ -125,45 +136,6 @@ char* AutoRocketNode::getInformation(){
   return this->information;
 }
 
-char* AutoRocketList::getFilename(){
 
-  return this->filename;
-}
-
-
-void AutoRocketList::setFilename(char filename[31]) {
-  
-  strcpy(this->filename, filename);
-//  saveScript();
-}
-
-
-void AutoRocketList::setDescription(char description[255]) {
-  
-  strcpy(this->description, description);
-//  saveScript();
-}
-
-
-void AutoRocketList::goToNextNode(){
-
-  //Don't try to jump over theExitNode
-  if (this->currNode->nextNode != NULL)
-    this->currNode = this->currNode->nextNode;
-   else
-    //We reached the end of the list
-    NULL;
-}
-
-
-void AutoRocketList::goToPrevNode(){
-
-  this->currNode = this->currNode->prevNode;
-}
-
-void AutoRocketList::goToTheTop(){
-
-  this->currNode = this->firstNode;
-}
 
 */

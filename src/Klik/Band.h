@@ -53,16 +53,14 @@ class Band {
     void newSong(char songname[31], uint32_t tempo);
     void delSong();
     
-    //Manipulating Data
-    void saveBand();
-    void setBandName(char bandname[31]);
-    
     //Getting Data
     char* getBandName();
     Song* getFirstSong();
     Song* getCurrSong();
     
-
+    //Manipulating Data
+    void saveBand();
+    void setBandName(char bandname[31]);
 
     //Navigating the Songs
     void goToNextSong();
