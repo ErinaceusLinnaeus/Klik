@@ -36,7 +36,7 @@ typedef enum {normal, edit, load,
           NumOfModes} mode;
 typedef enum {previous, next, playpause,
             normalMode, editMode, loadMode,
-            NIX=99} command;
+            NIX} command;
 int matrix[mode(NumOfModes)][5][3];
 
 //Keep the current mode in mind
@@ -174,13 +174,13 @@ void MonitorOutCommand(TSPoint point) {
     Serial.print("Mode: ");
     switch (currentMode)
     {
-      case 0:
+      case normalMode:
         Serial.println("normalMode");
         break;
-      case 1:
+      case editMode:
         Serial.println("editMode");
         break;
-      case 2:
+      case loadMode:
         Serial.println("loadMode");
         break;
     }
@@ -189,25 +189,25 @@ void MonitorOutCommand(TSPoint point) {
     Serial.print(") - ");
     switch (matrix[currentMode][point.x][point.y])
     {
-      case 0:
+      case previous:
         Serial.println("previous");
         break;
-      case 1:
+      case next:
         Serial.println("next");
         break;
-      case 2:
+      case playpause:
         Serial.println("playpause");
         break;
-      case 3:
+      case normalMode:
         Serial.println("normalMode");
         break;
-      case 4:
+      case editMode:
         Serial.println("editMode");
         break;
-      case 5:
+      case loadMode:
         Serial.println("loadMode");
         break;
-      case 99:
+      case NIX:
         Serial.println("NIX");
         break;
     }
