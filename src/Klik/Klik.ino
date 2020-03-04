@@ -29,6 +29,19 @@
 // For the one we're using, its 300 ohms across the X plate
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
+//A 3D array to store what command is triggered by what field
+//matrix[mode][x][y]
+// !!For Now we only use the normal mode!!
+typedef enum {normal, edit, load,
+          NumOfModes} mode;
+typedef enum {previous, next, playpause,
+            normalMode, editMode, loadMode,
+            NIX=99} command;
+int matrix[mode(NumOfModes)][5][3];
+
+//Keep the current mode in mind
+mode currentMode = 0;
+
 struct songlist
 {
   char* songname;
@@ -46,6 +59,55 @@ typedef struct band band;
 
 void setup() {
   Serial.begin(9600);
+
+//filling the array
+  matrix[0][0][0] = next;
+  matrix[0][0][1] = next;
+  matrix[0][0][2] = next;
+  matrix[0][1][0] = playpause;
+  matrix[0][1][1] = playpause;
+  matrix[0][1][2] = playpause;
+  matrix[0][2][0] = playpause;
+  matrix[0][2][1] = playpause;
+  matrix[0][2][2] = playpause;
+  matrix[0][3][0] = previous;
+  matrix[0][3][1] = previous;
+  matrix[0][3][2] = previous;
+  matrix[0][4][0] = loadMode;
+  matrix[0][4][1] = editMode;
+  matrix[0][4][2] = NIX;
+  
+  matrix[1][0][0] = NIX;
+  matrix[1][0][1] = NIX;
+  matrix[1][0][2] = NIX;
+  matrix[1][1][0] = NIX;
+  matrix[1][1][1] = NIX;
+  matrix[1][1][2] = NIX;
+  matrix[1][2][0] = NIX;
+  matrix[1][2][1] = NIX;
+  matrix[1][2][2] = NIX;
+  matrix[1][3][0] = NIX;
+  matrix[1][3][1] = NIX;
+  matrix[1][3][2] = NIX;
+  matrix[1][4][0] = loadMode;
+  matrix[1][4][1] = NIX;
+  matrix[1][4][2] = normalMode;
+  
+  matrix[2][0][0] = NIX;
+  matrix[2][0][1] = NIX;
+  matrix[2][0][2] = NIX;
+  matrix[2][1][0] = NIX;
+  matrix[2][1][1] = NIX;
+  matrix[2][1][2] = NIX;
+  matrix[2][2][0] = NIX;
+  matrix[2][2][1] = NIX;
+  matrix[2][2][2] = NIX;
+  matrix[2][3][0] = NIX;
+  matrix[2][3][1] = NIX;
+  matrix[2][3][2] = NIX;
+  matrix[2][4][0] = NIX;
+  matrix[2][4][1] = editMode;
+  matrix[2][4][2] = normalMode;
 
   band currBand;
   //Later replaced by stuff loaded from the SD card, maybe
@@ -76,6 +138,7 @@ void loop() {
 
   MonitorOutField(field);
 //  MonitorOutCoordinate(point);
+  MonitorOutCommand(field);
   delay(333);
 
 }
@@ -101,5 +164,53 @@ void MonitorOutCoordinate(TSPoint point) {
     Serial.print("/");
     Serial.print(point.y + YCORRECTION);
     Serial.println(")");
+  }
+}
+
+//Information for error correction
+void MonitorOutCommand(TSPoint point) {
+  
+  if (point.z > ts.pressureThreshhold) {
+    Serial.print("Mode: ");
+    switch (currentMode)
+    {
+      case 0:
+        Serial.println("normalMode");
+        break;
+      case 1:
+        Serial.println("editMode");
+        break;
+      case 2:
+        Serial.println("loadMode");
+        break;
+    }
+    Serial.print("Command: (");
+    Serial.print(matrix[currentMode][point.x][point.y]);
+    Serial.print(") - ");
+    switch (matrix[currentMode][point.x][point.y])
+    {
+      case 0:
+        Serial.println("previous");
+        break;
+      case 1:
+        Serial.println("next");
+        break;
+      case 2:
+        Serial.println("playpause");
+        break;
+      case 3:
+        Serial.println("normalMode");
+        break;
+      case 4:
+        Serial.println("editMode");
+        break;
+      case 5:
+        Serial.println("loadMode");
+        break;
+      case 99:
+        Serial.println("NIX");
+        break;
+    }
+    Serial.println("-------------------------");
   }
 }
