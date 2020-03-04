@@ -40,17 +40,16 @@ typedef enum {previous, next, playpause,
 int matrix[mode(NumOfModes)][5][3];
 
 //Keep the current mode in mind
-mode currentMode = 0;
+mode currentMode = normal;
 
-struct songlist
-{
+  
+struct songlist {
   char* songname;
   int tempo;
 };
 typedef struct songlist songlist;
 
-struct band
-{
+struct band {
   char* bandname;
   songlist song[32];
 };
@@ -108,7 +107,7 @@ void setup() {
   matrix[2][4][0] = NIX;
   matrix[2][4][1] = editMode;
   matrix[2][4][2] = normalMode;
-
+  
   band currBand;
   //Later replaced by stuff loaded from the SD card, maybe
   currBand.bandname = "lister";
