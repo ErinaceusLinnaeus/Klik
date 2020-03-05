@@ -139,10 +139,10 @@ void setup() {
   
   band currBand;
   //Later replaced by stuff loaded from the SD card, maybe
-  currBand.bandname = "Lister";
-  currBand.song[0].songname = "Sofdu";
+  strcpy(currBand.bandname, "Lister");
+  strcpy(currBand.song[0].songname, "Sofdu");
   currBand.song[0].tempo = 78;
-  currBand.song[1].songname = "Solo";
+  strcpy(currBand.song[1].songname, "Solo");
   currBand.song[1].tempo = 112;
 
   //etc.
