@@ -4,12 +4,33 @@
     Presumably it will take up 1 HE and half the rack's length.
 
     Parts:
-      Arduino Uno/Due
+      Arduino Uno
       2.8" TFT Touchscreen
 */
 
-#include <stdint.h>
 #include <TouchScreen.h>
+
+#include <Adafruit_GFX.h>    // Core graphics library
+#include <Adafruit_TFTLCD.h> // Hardware-specific library
+
+// The control pins for the LCD can be assigned to any digital or
+// analog pins...but we'll use the analog pins as this allows us to
+// double up the pins with the touch screen (see the TFT paint example).
+#define LCD_RESET A4 // Can alternately just connect to Arduino's reset pin
+#define LCD_CS A3 // Chip Select goes to Analog 3
+#define LCD_CD A2 // Command/Data goes to Analog 2
+#define LCD_WR A1 // LCD Write goes to Analog 1
+#define LCD_RD A0 // LCD Read goes to Analog 0
+
+// Assign human-readable names to some common 16-bit color values:
+#define BLACK   0x0000
+#define BLUE    0x001F
+#define RED     0xF800
+#define GREEN   0x07E0
+#define CYAN    0x07FF
+#define MAGENTA 0xF81F
+#define YELLOW  0xFFE0
+#define WHITE   0xFFFF
 
 #define YP A2  // must be an analog pin, use "An" notation!
 #define XM A3  // must be an analog pin, use "An" notation!
@@ -17,17 +38,23 @@
 #define XP 9   // can be a digital pin
 
 //If the touchscreen's zero-point doesn't start at 0
-#define  XCORRECTION -120
-#define  YCORRECTION -150
+#define TOUCHXCORRECTION -120
+#define TOUCHYCORRECTION -150
 
 //How wide(pixel) the buttons are
-#define  XDIVIDE 170
-#define  YDIVIDE 240
+#define TOUCHXDIVIDE 170
+#define TOUCHYDIVIDE 240
+
+//How wide(pixel) the buttons are
+#define TFTXDIVIDE 3
+#define TFTYDIVIDE 5
+
+Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
 // For better pressure precision, we need to know the resistance
 // between X+ and X- Use any multimeter to read it
 // For the one we're using, its 300 ohms across the X plate
-TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
+TouchScreen ts = TouchScreen(XP, YP, XM, YM, 570);
 
 //A 3D array to store what command is triggered by what field
 //matrix[mode][x][y]
@@ -58,7 +85,12 @@ typedef struct band band;
 
 void setup() {
   Serial.begin(9600);
-
+  
+  tft.reset();
+  tft.begin(0x9341);
+  
+  drawGrid();
+  
 //filling the array
   matrix[0][0][0] = next;
   matrix[0][0][1] = next;
@@ -123,7 +155,7 @@ void setup() {
 
 void loop() {
   
-  // a point object holds x y and z coordinates
+// a point object holds x y and z coordinates
   TSPoint point = ts.getPoint();
   TSPoint field;
 
@@ -131,18 +163,34 @@ void loop() {
 // (4/2) (3/2) (2/2) (1/2) (0/2)
 // (4/1) (3/1) (2/1) (1/1) (0/2)
 // (4/0) (3/0) (2/0) (1/0) (0/0)
-  field.x = ((point.x + XCORRECTION) / XDIVIDE);
-  field.y = ((point.y + YCORRECTION) / YDIVIDE);
+  field.x = ((point.x + TOUCHXCORRECTION) / TOUCHXDIVIDE);
+  field.y = ((point.y + TOUCHYCORRECTION) / TOUCHYDIVIDE);
   field.z = point.z;
 
+//Debuging-output
+  MonitorOutCoordinate(point);
   MonitorOutField(field);
-//  MonitorOutCoordinate(point);
   MonitorOutCommand(field);
   delay(333);
 
 }
 
-//Information for error correction
+//Draws the grid on the tft, so we know where the fields of touchscreen are
+void drawGrid() {
+  
+  int w = tft.width();
+  int h = tft.height();
+  
+  tft.fillScreen(BLACK);
+  
+  for (int y=0; y<h; y+=(h/TFTYDIVIDE))
+    tft.drawFastHLine(0, y, w, RED);
+    
+  for (int x=0; x<w; x+=(w/TFTXDIVIDE))
+    tft.drawFastVLine(x, 0, h, BLUE);
+}
+
+//Information for debugging
 void MonitorOutField(TSPoint point) {
   
   if (point.z > ts.pressureThreshhold) {
@@ -154,33 +202,33 @@ void MonitorOutField(TSPoint point) {
   }
 }
 
-//Information for error correction
+//Information for debugging
 void MonitorOutCoordinate(TSPoint point) {
   
   if (point.z > ts.pressureThreshhold) {
     Serial.print("Coordinate (x/y): (");
-    Serial.print(point.x + XCORRECTION);
+    Serial.print(point.x + TOUCHXCORRECTION);
     Serial.print("/");
-    Serial.print(point.y + YCORRECTION);
+    Serial.print(point.y + TOUCHYCORRECTION);
     Serial.println(")");
   }
 }
 
-//Information for error correction
+//Information for debugging
 void MonitorOutCommand(TSPoint point) {
   
   if (point.z > ts.pressureThreshhold) {
     Serial.print("Mode: ");
     switch (currentMode)
     {
-      case normalMode:
-        Serial.println("normalMode");
+      case normal:
+        Serial.println("normal");
         break;
-      case editMode:
-        Serial.println("editMode");
+      case edit:
+        Serial.println("edit");
         break;
-      case loadMode:
-        Serial.println("loadMode");
+      case load:
+        Serial.println("load");
         break;
     }
     Serial.print("Command: (");
