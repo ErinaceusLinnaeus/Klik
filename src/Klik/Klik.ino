@@ -88,7 +88,8 @@ void setup() {
   
   tft.reset();
   tft.begin(0x9341);
-  
+  tft.setRotation(3);
+
   drawGrid();
   
 //filling the array
@@ -167,6 +168,7 @@ void loop() {
 }
 
 //Draws the grid on the tft, so we know where the fields of touchscreen are
+//Also draw what command is asigned to what field 
 void drawGrid() {
   
   int w = tft.width();
@@ -174,11 +176,13 @@ void drawGrid() {
   
   tft.fillScreen(BLACK);
   
-  for (int y=0; y<h; y+=(h/TFTYDIVIDE))
+  for (int y=0; y<w+1; y+=(w/TFTYDIVIDE))
     tft.drawFastHLine(0, y, w, RED);
+  tft.drawFastHLine(0, h-1, w, RED);
     
-  for (int x=0; x<w; x+=(w/TFTXDIVIDE))
+  for (int x=0; x<h+1; x+=(h/TFTXDIVIDE))
     tft.drawFastVLine(x, 0, h, BLUE);
+  tft.drawFastVLine(w-1, 0, h, BLUE);
 }
 
 //Information for debugging
