@@ -65,7 +65,7 @@ TouchScreen ts = TouchScreen(XP, YP, XM, YM, 570);
 // !!For Now we only use the normal mode!!
 typedef enum {normal, edit, load,
           NumOfModes} mode;
-typedef enum {previous, next, playpause,
+typedef enum {previous, next, play, stop,
             normalMode, editMode, loadMode,
             NIX} command;
 int matrix[mode(NumOfModes)][TFTYDIVIDE][TFTXDIVIDE];
@@ -92,14 +92,14 @@ void setup() {
   
 //filling the array
   matrix[0][0][0] = next;
-  matrix[0][0][1] = next;
-  matrix[0][0][2] = next;
-  matrix[0][1][0] = playpause;
-  matrix[0][1][1] = playpause;
-  matrix[0][1][2] = playpause;
+  matrix[0][0][1] = play;
+  matrix[0][0][2] = play;
+  matrix[0][1][0] = stop;
+  matrix[0][1][1] = play;
+  matrix[0][1][2] = play;
   matrix[0][2][0] = previous;
-  matrix[0][2][1] = previous;
-  matrix[0][2][2] = previous;
+  matrix[0][2][1] = play;
+  matrix[0][2][2] = play;
   matrix[0][3][0] = loadMode;
   matrix[0][3][1] = editMode;
   matrix[0][3][2] = NIX;
@@ -139,7 +139,7 @@ void setup() {
   
   band currBand;
   //Later replaced by stuff loaded from the SD card, maybe
-  currBand.bandname = "lister";
+  currBand.bandname = "Lister";
   currBand.song[0].songname = "Sofdu";
   currBand.song[0].tempo = 78;
   currBand.song[1].songname = "Solo";
@@ -202,8 +202,11 @@ void drawGrid() {
         case next:
           tft.print("next");
           break;
-        case playpause:
-          tft.print("playpause");
+        case play:
+          tft.print("play");
+          break;
+        case stop:
+          tft.print("stop");
           break;
         case normalMode:
           tft.print("normalMode");
@@ -274,8 +277,11 @@ void MonitorOutCommand(TSPoint point) {
       case next:
         Serial.println("next");
         break;
-      case playpause:
-        Serial.println("playpause");
+      case play:
+        Serial.println("play");
+        break;
+      case stop:
+        Serial.println("stop");
         break;
       case normalMode:
         Serial.println("normalMode");
