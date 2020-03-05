@@ -86,12 +86,6 @@ typedef struct band band;
 void setup() {
   Serial.begin(9600);
   
-  tft.reset();
-  tft.begin(0x9341);
-  tft.setRotation(3);
-
-  drawGrid();
-  
 //filling the array
   matrix[0][0][0] = next;
   matrix[0][0][1] = next;
@@ -131,6 +125,13 @@ void setup() {
   matrix[2][3][0] = NIX;
   matrix[2][3][1] = editMode;
   matrix[2][3][2] = normalMode;
+  
+  tft.reset();
+  tft.begin(0x9341);
+  tft.setRotation(3);
+
+//Grid for debug and development reasons
+  drawGrid();
   
   band currBand;
   //Later replaced by stuff loaded from the SD card, maybe
@@ -176,13 +177,44 @@ void drawGrid() {
   
   tft.fillScreen(BLACK);
   
-  for (int y=0; y<w+1; y+=(w/TFTYDIVIDE))
+  for (int y=0; y<=w; y+=(w/TFTYDIVIDE))
     tft.drawFastHLine(0, y, w, RED);
   tft.drawFastHLine(0, h-1, w, RED);
     
-  for (int x=0; x<h+1; x+=(h/TFTXDIVIDE))
+  for (int x=0; x<=h; x+=(h/TFTXDIVIDE))
     tft.drawFastVLine(x, 0, h, BLUE);
   tft.drawFastVLine(w-1, 0, h, BLUE);
+
+  for (int x=0; x<TFTXDIVIDE; x++) {
+    for (int y=0; y<TFTYDIVIDE; y++) {
+      
+      tft.setCursor(y*(w/TFTYDIVIDE)+1,x*(h/TFTXDIVIDE)+1);
+      switch (matrix[currentMode][TFTYDIVIDE-y-1][TFTXDIVIDE-x-1])
+      {
+        case previous:
+          tft.print("previous");
+          break;
+        case next:
+          tft.print("next");
+          break;
+        case playpause:
+          tft.print("playpause");
+          break;
+        case normalMode:
+          tft.print("normalMode");
+          break;
+        case editMode:
+          tft.print("editMode");
+          break;
+        case loadMode:
+          tft.print("loadMode");
+          break;
+        case NIX:
+          tft.print("NIX");
+          break;
+      }
+    }
+  } 
 }
 
 //Information for debugging
