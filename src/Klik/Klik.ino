@@ -70,8 +70,9 @@ typedef enum {previous, next, play, stop,
             NIX} command;
 int matrix[mode(NumOfModes)][TFTYDIVIDE][TFTXDIVIDE];
 
-//Keep the current mode in mind
+//Keep the current mode and status in mind
 mode currentMode = normal;
+command currentStatus = stop;
 
   
 struct songlist {
@@ -102,7 +103,7 @@ void setup() {
   matrix[0][2][2] = play;
   matrix[0][3][0] = loadMode;
   matrix[0][3][1] = editMode;
-  matrix[0][3][2] = NIX;
+  matrix[0][3][2] = normalMode;
   
   matrix[1][0][0] = NIX;
   matrix[1][0][1] = NIX;
@@ -114,7 +115,7 @@ void setup() {
   matrix[1][2][1] = NIX;
   matrix[1][2][2] = NIX;
   matrix[1][3][0] = loadMode;
-  matrix[1][3][1] = NIX;
+  matrix[1][3][1] = editMode;
   matrix[1][3][2] = normalMode;
   
   matrix[2][0][0] = NIX;
@@ -126,16 +127,20 @@ void setup() {
   matrix[2][2][0] = NIX;
   matrix[2][2][1] = NIX;
   matrix[2][2][2] = NIX;
-  matrix[2][3][0] = NIX;
+  matrix[2][3][0] = loadMode;
   matrix[2][3][1] = editMode;
   matrix[2][3][2] = normalMode;
   
   tft.reset();
   tft.begin(0x9341);
   tft.setRotation(3);
+  tft.fillScreen(BLACK);
 
+
+  drawButtons();
+  
 //Grid for debug and development reasons
-  drawGrid();
+//  drawGrid();
   
   band currBand;
   //Later replaced by stuff loaded from the SD card, maybe
@@ -146,6 +151,7 @@ void setup() {
   currBand.song[1].tempo = 112;
 
   //etc.
+
 
 
 }
@@ -172,6 +178,91 @@ void loop() {
 
 }
 
+//Draws the symbols/buttons
+void drawButtons() {
+  
+  int w = tft.width();
+  int h = tft.height();
+  
+  tft.setTextColor(BLACK);
+  tft.setTextSize(2);
+  
+  for (int x=0; x<TFTXDIVIDE; x++) {
+    for (int y=0; y<TFTYDIVIDE; y++) {
+      
+      switch (matrix[currentMode][TFTYDIVIDE-y-1][TFTXDIVIDE-x-1])
+      {
+        case previous:
+          tft.fillCircle((y*(w/TFTYDIVIDE)+40), (x*(h/TFTXDIVIDE)+40), 36, LIGHTGREY);
+          tft.fillRoundRect((y*(w/TFTYDIVIDE)+22), (x*(h/TFTXDIVIDE)+22), 12, 36, 2, BLACK);
+          tft.fillTriangle((y*(w/TFTYDIVIDE)+58), (x*(h/TFTXDIVIDE)+23),
+                           (y*(w/TFTYDIVIDE)+34), (x*(h/TFTXDIVIDE)+39),
+                           (y*(w/TFTYDIVIDE)+58), (x*(h/TFTXDIVIDE)+57), BLACK);
+          break;
+        case next:
+          tft.fillCircle((y*(w/TFTYDIVIDE)+40), (x*(h/TFTXDIVIDE)+40), 36, LIGHTGREY);
+          tft.fillRoundRect((y*(w/TFTYDIVIDE)+46), (x*(h/TFTXDIVIDE)+22), 12, 36, 2, BLACK);
+          tft.fillTriangle((y*(w/TFTYDIVIDE)+22), (x*(h/TFTXDIVIDE)+23),
+                           (y*(w/TFTYDIVIDE)+46), (x*(h/TFTXDIVIDE)+39),
+                           (y*(w/TFTYDIVIDE)+22), (x*(h/TFTXDIVIDE)+57), BLACK);
+          break;
+        case play:
+          break;
+        case stop:
+          if (currentStatus == stop)
+            tft.fillCircle((y*(w/TFTYDIVIDE)+40), (x*(h/TFTXDIVIDE)+40), 36, YELLOW);
+          else
+            tft.fillCircle((y*(w/TFTYDIVIDE)+40), (x*(h/TFTXDIVIDE)+40), 36, LIGHTGREY);
+          tft.fillRoundRect((y*(w/TFTYDIVIDE)+22), (x*(h/TFTXDIVIDE)+22), 36, 36, 2, BLACK);
+          break;
+        case normalMode:
+          if (currentMode == normal)
+            tft.fillRoundRect((y*(w/TFTYDIVIDE)+10), (x*(h/TFTXDIVIDE)+10), 60, 60, 2, YELLOW);
+          else
+            tft.fillRoundRect((y*(w/TFTYDIVIDE)+10), (x*(h/TFTXDIVIDE)+10), 60, 60, 2, LIGHTGREY);
+          tft.setCursor(y*(w/TFTYDIVIDE)+18,x*(h/TFTXDIVIDE)+30);
+          tft.println("PLAY");
+          break;
+        case editMode:
+          if (currentMode == edit)
+            tft.fillRoundRect((y*(w/TFTYDIVIDE)+10), (x*(h/TFTXDIVIDE)+10), 60, 60, 2, YELLOW);
+          else
+            tft.fillRoundRect((y*(w/TFTYDIVIDE)+10), (x*(h/TFTXDIVIDE)+10), 60, 60, 2, LIGHTGREY);
+          tft.setCursor(y*(w/TFTYDIVIDE)+18,x*(h/TFTXDIVIDE)+30);
+          tft.println("EDIT");
+          break;
+        case loadMode:
+          if (currentMode == load)
+            tft.fillRoundRect((y*(w/TFTYDIVIDE)+10), (x*(h/TFTXDIVIDE)+10), 60, 60, 2, YELLOW);
+          else
+            tft.fillRoundRect((y*(w/TFTYDIVIDE)+10), (x*(h/TFTXDIVIDE)+10), 60, 60, 2, LIGHTGREY);
+          tft.setCursor(y*(w/TFTYDIVIDE)+18,x*(h/TFTXDIVIDE)+30);
+          tft.println("LOAD");
+          break;
+        case NIX:
+          break;
+      }
+          Serial.print("y*(w/TFTYDIVIDE)+2 : ");
+          Serial.print(y);
+          Serial.print("*(");
+          Serial.print(w);
+          Serial.print("/");
+          Serial.print(TFTYDIVIDE);
+          Serial.print(")+2 = ");
+          Serial.println(y*(w/TFTYDIVIDE)+2);
+          
+          Serial.print("x*(h/TFTXDIVIDE)+2 : ");
+          Serial.print(x);
+          Serial.print("*(");
+          Serial.print(h);
+          Serial.print("/");
+          Serial.print(TFTXDIVIDE);
+          Serial.print(")+2 = ");
+          Serial.println(x*(h/TFTXDIVIDE)+2);
+    }
+  }
+}
+
 //Draws the grid on the tft, so we know where the fields of touchscreen are
 //Also draw what command is assigned to what field 
 void drawGrid() {
@@ -179,8 +270,8 @@ void drawGrid() {
   int w = tft.width();
   int h = tft.height();
   
-  tft.fillScreen(BLACK);
   tft.setTextColor(DARKGREY);
+  tft.setTextSize(1);
   
   for (int y=0; y<=w; y+=(w/TFTYDIVIDE))
     tft.drawFastHLine(0, y, w, LIGHTGREY);
