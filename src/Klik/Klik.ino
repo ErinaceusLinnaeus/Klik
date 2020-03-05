@@ -23,14 +23,18 @@
 #define LCD_RD A0 // LCD Read goes to Analog 0
 
 // Assign human-readable names to some common 16-bit color values:
-#define BLACK   0x0000
-#define BLUE    0x001F
-#define RED     0xF800
-#define GREEN   0x07E0
-#define CYAN    0x07FF
-#define MAGENTA 0xF81F
-#define YELLOW  0xFFE0
-#define WHITE   0xFFFF
+#define BLACK     0x0000
+#define DARKGREY  0x7BEF
+#define LIGHTGREY 0xBDF7
+#define WHITE     0xFFFF
+#define BROWN     0x79E0
+#define RED       0xF800
+#define GREEN     0x07E0
+#define BLUE      0x001F
+#define CYAN      0x07FF
+#define MAGENTA   0xF81F
+#define YELLOW    0xFFE0
+#define ORANGE    0xFBE0
 
 #define YP A2  // must be an analog pin, use "An" notation!
 #define XM A3  // must be an analog pin, use "An" notation!
@@ -176,19 +180,20 @@ void drawGrid() {
   int h = tft.height();
   
   tft.fillScreen(BLACK);
+  tft.setTextColor(DARKGREY);
   
   for (int y=0; y<=w; y+=(w/TFTYDIVIDE))
-    tft.drawFastHLine(0, y, w, RED);
-  tft.drawFastHLine(0, h-1, w, RED);
+    tft.drawFastHLine(0, y, w, LIGHTGREY);
+  tft.drawFastHLine(0, h-1, w, LIGHTGREY);
     
   for (int x=0; x<=h; x+=(h/TFTXDIVIDE))
-    tft.drawFastVLine(x, 0, h, BLUE);
-  tft.drawFastVLine(w-1, 0, h, BLUE);
+    tft.drawFastVLine(x, 0, h, LIGHTGREY);
+  tft.drawFastVLine(w-1, 0, h, LIGHTGREY);
 
   for (int x=0; x<TFTXDIVIDE; x++) {
     for (int y=0; y<TFTYDIVIDE; y++) {
       
-      tft.setCursor(y*(w/TFTYDIVIDE)+1,x*(h/TFTXDIVIDE)+1);
+      tft.setCursor(y*(w/TFTYDIVIDE)+2,x*(h/TFTXDIVIDE)+2);
       switch (matrix[currentMode][TFTYDIVIDE-y-1][TFTXDIVIDE-x-1])
       {
         case previous:
