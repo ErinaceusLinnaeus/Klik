@@ -42,12 +42,12 @@
 #define TOUCHYCORRECTION -150
 
 //How wide(pixel) the buttons are
-#define TOUCHXDIVIDE 170
+#define TOUCHXDIVIDE 240
 #define TOUCHYDIVIDE 240
 
 //How wide(pixel) the buttons are
 #define TFTXDIVIDE 3
-#define TFTYDIVIDE 5
+#define TFTYDIVIDE 4
 
 Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
@@ -64,7 +64,7 @@ typedef enum {normal, edit, load,
 typedef enum {previous, next, playpause,
             normalMode, editMode, loadMode,
             NIX} command;
-int matrix[mode(NumOfModes)][5][3];
+int matrix[mode(NumOfModes)][TFTYDIVIDE][TFTXDIVIDE];
 
 //Keep the current mode in mind
 mode currentMode = normal;
@@ -98,15 +98,12 @@ void setup() {
   matrix[0][1][0] = playpause;
   matrix[0][1][1] = playpause;
   matrix[0][1][2] = playpause;
-  matrix[0][2][0] = playpause;
-  matrix[0][2][1] = playpause;
-  matrix[0][2][2] = playpause;
-  matrix[0][3][0] = previous;
-  matrix[0][3][1] = previous;
-  matrix[0][3][2] = previous;
-  matrix[0][4][0] = loadMode;
-  matrix[0][4][1] = editMode;
-  matrix[0][4][2] = NIX;
+  matrix[0][2][0] = previous;
+  matrix[0][2][1] = previous;
+  matrix[0][2][2] = previous;
+  matrix[0][3][0] = loadMode;
+  matrix[0][3][1] = editMode;
+  matrix[0][3][2] = NIX;
   
   matrix[1][0][0] = NIX;
   matrix[1][0][1] = NIX;
@@ -117,12 +114,9 @@ void setup() {
   matrix[1][2][0] = NIX;
   matrix[1][2][1] = NIX;
   matrix[1][2][2] = NIX;
-  matrix[1][3][0] = NIX;
+  matrix[1][3][0] = loadMode;
   matrix[1][3][1] = NIX;
-  matrix[1][3][2] = NIX;
-  matrix[1][4][0] = loadMode;
-  matrix[1][4][1] = NIX;
-  matrix[1][4][2] = normalMode;
+  matrix[1][3][2] = normalMode;
   
   matrix[2][0][0] = NIX;
   matrix[2][0][1] = NIX;
@@ -134,11 +128,8 @@ void setup() {
   matrix[2][2][1] = NIX;
   matrix[2][2][2] = NIX;
   matrix[2][3][0] = NIX;
-  matrix[2][3][1] = NIX;
-  matrix[2][3][2] = NIX;
-  matrix[2][4][0] = NIX;
-  matrix[2][4][1] = editMode;
-  matrix[2][4][2] = normalMode;
+  matrix[2][3][1] = editMode;
+  matrix[2][3][2] = normalMode;
   
   band currBand;
   //Later replaced by stuff loaded from the SD card, maybe
