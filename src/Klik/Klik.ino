@@ -173,7 +173,7 @@ void loop() {
 }
 
 //Draws the grid on the tft, so we know where the fields of touchscreen are
-//Also draw what command is asigned to what field 
+//Also draw what command is assigned to what field 
 void drawGrid() {
   
   int w = tft.width();
