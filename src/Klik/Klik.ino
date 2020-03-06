@@ -134,14 +134,13 @@ void setup() {
   tft.reset();
   tft.begin(0x9341);
   tft.setRotation(3);
-  tft.fillScreen(BLACK);
 
 
   drawButtons();
-  
+    
 //Grid for debug and development reasons
 //  drawGrid();
-  
+/*  
   band currBand;
   //Later replaced by stuff loaded from the SD card, maybe
   strcpy(currBand.bandname, "Lister");
@@ -149,10 +148,8 @@ void setup() {
   currBand.song[0].tempo = 78;
   strcpy(currBand.song[1].songname, "Solo");
   currBand.song[1].tempo = 112;
-
+*/
   //etc.
-
-
 
 }
 
@@ -170,6 +167,9 @@ void loop() {
   field.y = ((point.y + TOUCHYCORRECTION) / TOUCHYDIVIDE);
   field.z = point.z;
 
+//Check if the touscreen is touched
+  checkTouchscreen(field);
+
 //Debuging-output
   MonitorOutCoordinate(point);
   MonitorOutField(field);
@@ -178,12 +178,40 @@ void loop() {
 
 }
 
+//Check if the touscreen is touched
+void checkTouchscreen(TSPoint point) {
+
+  switch (matrix[currentMode][point.x][point.y])
+  {
+    case previous:
+      break;
+    case next:
+      break;
+    case play:
+      break;
+    case stop:
+      break;
+    case normalMode:
+      currentMode = normal;
+      break;
+    case editMode:
+      currentMode = edit;
+      break;
+    case loadMode:
+      currentMode = load;
+      break;
+    case NIX:
+      break;
+  }
+}
+
 //Draws the symbols/buttons
 void drawButtons() {
   
   int w = tft.width();
   int h = tft.height();
   
+  tft.fillScreen(BLACK);
   tft.setTextColor(BLACK);
   tft.setTextSize(2);
   
@@ -242,23 +270,6 @@ void drawButtons() {
         case NIX:
           break;
       }
-          Serial.print("y*(w/TFTYDIVIDE)+2 : ");
-          Serial.print(y);
-          Serial.print("*(");
-          Serial.print(w);
-          Serial.print("/");
-          Serial.print(TFTYDIVIDE);
-          Serial.print(")+2 = ");
-          Serial.println(y*(w/TFTYDIVIDE)+2);
-          
-          Serial.print("x*(h/TFTXDIVIDE)+2 : ");
-          Serial.print(x);
-          Serial.print("*(");
-          Serial.print(h);
-          Serial.print("/");
-          Serial.print(TFTXDIVIDE);
-          Serial.print(")+2 = ");
-          Serial.println(x*(h/TFTXDIVIDE)+2);
     }
   }
 }
