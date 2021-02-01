@@ -16,17 +16,21 @@
       Ring: analog pullup A1
       Tip: analog pullup A0
 
-    Line-Out an PWM 5
+    left Line-Out an PWM 5
+    right Line-Out an PWM 6
+      The Beep toggles between left and right channel,
+      making it easier to keep track of straight or odd timings.
 
 */
 
 //~ 120.000 cycles/second
 // -> At 10.000 -> 12 c/s
 // -> 720 c/min
-// -> 180 bpm at 2 times resolution
+// -> 180 bpm at 4 times resolution
 #define CYCLE 10000
 
 //How big/long the Array for the timer is
+//We average out the tempo by all the timer values in the array
 #define TIMER_ARRAY_SIZE 8
 
 //Where the TriggerPad is connected to
@@ -34,7 +38,9 @@ int pinPiezo = A0;
 int pinRimSwitch = A1;
 
 //Where the Outputjack is connected to
-int pinLineOut = 5;
+int pinLeftOut = 5;
+//Where the Outputjack is connected to
+int pinRightOut = 6;
 
 //An Array where the trigger inputs during a cycle a stored
 int piezo[CYCLE];
@@ -57,21 +63,40 @@ unsigned long lastBeep = 0;
 
 //Boolean to turn the metronom on/off
 bool metronomActive = false;
+//Boolean to switch between left and right
+bool metronomLeft = true;
 
 //Play the very simple 500Hz metronom beep
 void playBeep() {
 
-  analogWrite(pinLineOut, 1023);
-  delay(1);
-  analogWrite(pinLineOut, 0);
-  delay(1);
-  analogWrite(pinLineOut, 512);
-  delay(1);
-  analogWrite(pinLineOut, 0);
-  delay(1);
-  analogWrite(pinLineOut, 265);
-  delay(1);
-  analogWrite(pinLineOut, 0);
+  if (metronomLeft){
+    analogWrite(pinLeftOut, 1023);
+    delay(1);
+    analogWrite(pinLeftOut, 0);
+    delay(1);
+    analogWrite(pinLeftOut, 512);
+    delay(1);
+    analogWrite(pinLeftOut, 0);
+    delay(1);
+    analogWrite(pinLeftOut, 265);
+    delay(1);
+    analogWrite(pinLeftOut, 0);
+  }
+  else{
+    analogWrite(pinRightOut, 1023);
+    delay(1);
+    analogWrite(pinRightOut, 0);
+    delay(1);
+    analogWrite(pinRightOut, 512);
+    delay(1);
+    analogWrite(pinRightOut, 0);
+    delay(1);
+    analogWrite(pinRightOut, 265);
+    delay(1);
+    analogWrite(pinRightOut, 0);
+  
+  }
+  metronomLeft = !metronomLeft;
 
   //Just for debuging
 //  Serial.println("BEEP");
