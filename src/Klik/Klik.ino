@@ -17,7 +17,7 @@
       Tip: analog pullup A0
 
     left Line-Out an PWM 5
-    right Line-Out an PWM 6
+    right Line-Out an PWM 4
       The Beep toggles between left and right channel,
       making it easier to keep track of straight or odd timings.
 
@@ -40,7 +40,7 @@ int pinRimSwitch = A1;
 //Where the Outputjack is connected to
 int pinLeftOut = 5;
 //Where the Outputjack is connected to
-int pinRightOut = 6;
+int pinRightOut = 4;
 
 //An Array where the trigger inputs during a cycle a stored
 int piezo[CYCLE];
@@ -81,6 +81,7 @@ void playBeep() {
     analogWrite(pinLeftOut, 265);
     delay(1);
     analogWrite(pinLeftOut, 0);
+    //Serial.println("LEFT");
   }
   else{
     analogWrite(pinRightOut, 1023);
@@ -94,6 +95,7 @@ void playBeep() {
     analogWrite(pinRightOut, 265);
     delay(1);
     analogWrite(pinRightOut, 0);
+    //Serial.println("RIGHT");
   
   }
   metronomLeft = !metronomLeft;
